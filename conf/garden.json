@@ -1,0 +1,54 @@
+{
+
+    "id": "minun_shadowsocks_app",
+    "name": "Shadowsocks",
+
+    "windows": {
+        "shadowsocks": {
+            "width": 880, "height": 414
+        },
+        "import": {
+            "title": "Import subscriptions",
+            "width": 600, "height": 250
+        },
+        "preferences": {
+            "title": "Preferences",
+            "width": 640, "height": 340
+        }
+    },
+    "tray": {
+        "icon": "res/tray.disconnected.png",
+        "tooltip": "Shadowsocks",
+        "menus": [
+            { "id": "open-shadowsocks", "label": "Open Shadowsocks..." },
+            { "type": "separator" },
+            { "id": "connect-shadowsocks", "label": "Connect..." },
+            { "id": "disconnect-shadowsocks", "label": "Disconnect", "visible": false },
+            { "type": "separator" },
+            { "id": "preferences", "label": "Preferences..." },
+            { "id": "proxy-modes", "label": "Proxy modes", "submenu": [
+                { "id": "no-proxy", "label": "No proxy", "type": "radio", "checked": true },
+                { "id": "pac-proxy", "label": "Automatic proxy", "type": "radio" },
+                { "id": "manual-proxy", "label": "Global proxy", "type": "radio" }
+            ] },
+            { "id": "updates", "label": "Updates", "submenu": [
+                { "id": "update-subscriptions", "label": "Update subscriptions" },
+                { "id": "update-pac-text", "label": "Update PAC text" }
+            ] },
+            { "id": "imports", "label": "Imports", "submenu": [
+                { "id": "import-from-clipboard", "label": "Import from clipboard" },
+                { "id": "import-from-screenshot", "label": "Import from QRCode on screen", "visible": false },
+                { "id": "import-from-new-subscription-url", "label": "Import from new subscription URL" },
+                { "id": "import-from-local-file", "label": "Import from local File", "visible": false }
+            ] },
+            { "id": "ipv6", "label": "Prefer IPv6 for LAN", "type": "checkbox", "checked": false, "visible": false },
+            { "type": "separator" },
+            { "id": "copy-proxy-environments", "label": "Copy proxy environments for shell" },
+            { "type": "separator" },
+            { "id": "quit-shadowsocks", "label": "Quit" }
+        ]
+    }, 
+
+    "defaultWindow": "shadowsocks"
+    
+}

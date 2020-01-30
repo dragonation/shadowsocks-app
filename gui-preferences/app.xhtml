@@ -1,0 +1,116 @@
+<ui-dock-icon title="Shadowsocks" icon="/~shadowsocks/res/icon.svg"/>
+<ui-workbench style:background-color="#eee">
+    <div id="container">
+        <div id="tabs">
+            <ui-button id="tab-general" class="tab" class:active="${activeTab == 'general'}" @action="switchTab('general')">General</ui-button>
+            <ui-button id="tab-http-proxy" class="tab" class:active="${activeTab == 'http-proxy'}" @action="switchTab('http-proxy')">HTTP proxy</ui-button>
+            <ui-button id="tab-pac-server" class="tab" class:active="${activeTab == 'pac-server'}" @action="switchTab('pac-server')">PAC server</ui-button>
+            <ui-button id="tab-subscriptions" class="tab" class:active="${activeTab == 'subscriptions'}" @action="switchTab('subscriptions')">Subscriptions</ui-button>
+            <ui-button id="tab-advanced" class="tab" class:active="${activeTab == 'advanced'}" @action="switchTab('advanced')">Advanced</ui-button>
+        </div>
+        <ui-scroll-view id="form" scroll-y="yes" @scroll="updateActiveTab(parameter)">
+            <div class="panel" id="panel-general">
+                <div class="panel-title">General</div>
+                <div class="panel-group">
+                    <div class="panel-input">
+                        <div class="panel-key">Autoreconnect after started</div>
+                        <div class="panel-value"><ui-switch checked="${preferences.autoreconnectAfterStarted ? 'yes' : 'no'}" @change="updatePreference('autoreconnectAfterStarted', parameter)"/></div>
+                    </div>
+                    <div class="panel-input">
+                        <div class="panel-key">Proxy mode</div>
+                        <div class="panel-value"><ui-picker-field value="${preferences.proxyMode}" @change="updatePreference('proxyMode', parameter)">
+                            <ui-picker-field-item value="none">No proxy</ui-picker-field-item>
+                            <ui-picker-field-item value="pac">Automatic proxy</ui-picker-field-item>
+                            <ui-picker-field-item value="manual">Global proxy</ui-picker-field-item>
+                        </ui-picker-field></div>
+                    </div>
+                    <div class="panel-input">
+                        <div class="panel-key">Serve Socks5 proxy for LAN</div>
+                        <div class="panel-value"><ui-switch checked="${preferences.serveSocks5ProxyForLAN ? 'yes' : 'no'}" @change="updatePreference('serveSocks5ProxyForLAN', parameter)"/></div>
+                    </div>
+                    <div class="panel-input">
+                        <div class="panel-key">Prefer IPv6 for LAN (Experimental)</div>
+                        <div class="panel-value"><ui-switch checked="${preferences.preferIPv6ForLAN ? 'yes' : 'no'}" @change="updatePreference('preferIPv6ForLAN', parameter)"/></div>
+                    </div>
+                    <div class="panel-input">
+                        <div class="panel-key">Local Socks5 proxy port</div>
+                        <div class="panel-value"><ui-number-field value="${preferences.localSocks5ProxyPort}" @blur="updatePreference('localSocks5ProxyPort', parameter)"/></div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel" id="panel-http-proxy">
+                <div class="panel-title">HTTP proxy</div>
+                <div class="panel-group">
+                    <div class="panel-input">
+                        <div class="panel-key">Serve HTTP proxy for LAN</div>
+                        <div class="panel-value"><ui-switch checked="${preferences.serveHTTPProxyForLAN ? 'yes' : 'no'}" @change="updatePreference('serveHTTPProxyForLAN', parameter)"/></div>
+                    </div>
+                    <div class="panel-input">
+                        <div class="panel-key">Local HTTP proxy port</div>
+                        <div class="panel-value"><ui-number-field value="${preferences.localHTTPProxyPort}" @blur="updatePreference('localHTTPProxyPort', parameter)"/></div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel" id="panel-pac-server">
+                <div class="panel-title">PAC server</div>
+                <div class="panel-group">
+                    <div class="panel-input">
+                        <div class="panel-key">Enable PAC server</div>
+                        <div class="panel-value"><ui-switch checked="${preferences.enablePACServer ? 'yes' : 'no'}" @change="updatePreference('enablePACServer', parameter)"/></div>
+                    </div>
+                    <div class="panel-input">
+                        <div class="panel-key">Serve PAC server for LAN</div>
+                        <div class="panel-value"><ui-switch checked="${preferences.servePACServerForLAN ? 'yes' : 'no'}" @change="updatePreference('servePACServerForLAN', parameter)"/></div>
+                    </div>
+                    <div class="panel-input">
+                        <div class="panel-key">Local PAC server port</div>
+                        <div class="panel-value"><ui-number-field value="${preferences.localPACServerPort}" @blur="updatePreference('localPACServerPort', parameter)"/></div>
+                    </div>
+                    <div class="panel-input">
+                        <div class="panel-key">GFW list text repo URL</div>
+                        <div class="panel-value"><ui-button class="dark" @action="updateGFWList()">Update</ui-button></div>
+                        <div class="panel-value-input"><ui-input-field value="${preferences.pacServerGFWListURL}" @blur="updatePreference('pacServerGFWListURL', parameter)"/></div>
+                    </div>
+                    <div class="panel-input">
+                        <div class="panel-key">Autoupdate GFW list text after started</div>
+                        <div class="panel-value"><ui-switch checked="${preferences.autoupdateGFWListAfterStarted ? 'yes' : 'no'}" @change="updatePreference('autoupdateGFWListAfterStarted', parameter)"/></div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel" id="panel-subscriptions">
+                <div class="panel-title">Subscriptions</div>
+                <div class="panel-group">
+                    <div class="panel-input">
+                        <div class="panel-key">URL list</div>
+                        <div class="panel-value">
+                            <ui-button class="light" style:background-color="#fff" @action="addSubscription()">Add</ui-button>
+                            <ui-button class="dark" @action="updateSubscriptions()">Update</ui-button>
+                        </div>
+                        <div class="panel-value-input">
+                            <ui-sheet-view columns="url" fixed-right-columns="actions" prop:data="${preferences.subscriptionURLs}">
+                                <ui-sheet-view-column cell-slot="url" name="url" style:--column-width="166px">URL</ui-sheet-view-column>
+                                <ui-sheet-view-column cell-slot="actions" name="actions" style:--column-width="30px">Actions</ui-sheet-view-column>
+                                <tmpl:slot name="url"><div class="url-cell" title="${cell}">${cell}</div></tmpl:slot>
+                                <tmpl:slot name="actions" class:actions="${true}"><ui-button class="light" style:line-height="16px" style:padding="0 4px" style:font-size="10px" style:background-color="#fff" @action="removeSubscription(cell)">Remove</ui-button></tmpl:slot>
+                            </ui-sheet-view>
+                        </div>
+                    </div>
+                    <div class="panel-input">
+                        <div class="panel-key">Autoupdate subscriptions after started</div>
+                        <div class="panel-value"><ui-switch checked="${preferences.autoupdateSubscriptionsAfterStarted ? 'yes' : 'no'}" @change="updatePreference('autoupdateSubscriptionsAfterStarted', parameter)"/></div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel" id="panel-advanced">
+                <div class="panel-title">Advanced</div>
+                <div class="panel-group">
+                    <div class="panel-input">
+                        <div class="panel-key">Python location</div>
+                        <div class="panel-value"><ui-button class="light" style:background-color="#fff" @action="locatePython()">Browse</ui-button></div>
+                        <div class="panel-value-input"><ui-input-field value="${preferences.pythonLocation}" @blur="updatePreference('pythonLocation', parameter)"/></div>
+                    </div>
+                </div>
+            </div>
+        </ui-scroll-view>
+    </div>
+</ui-workbench>

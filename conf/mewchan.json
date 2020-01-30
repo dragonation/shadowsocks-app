@@ -1,0 +1,45 @@
+{
+    "brainOptions": {
+        "shrinkingCodes": false,
+        "ui": "gui",
+        "apps": {
+            "shadowsocks": "gui-shadowsocks",
+            "import": "gui-import",
+            "preferences": "gui-preferences"
+        },
+        "pages": [ "index.html" ]
+    },
+    "playgrounds": {
+        "http.gui": {
+            "socket": "${tempFile('garden-gui-')}.sock"
+        }
+    },
+    "kitties": {
+        "ssr": {},
+        "gfwlist": {},
+        "proxy": {},
+        "qrcode": {}
+    },
+    "resources": {
+        "gui": {
+            "playground": "http.gui",
+            "innerPath": "gui",
+            "outerPath": "/"
+        },
+        "gui-shadowsocks": {
+            "playground": "http.gui",
+            "innerPath": "gui-shadowsocks",
+            "outerPath": "/~shadowsocks"
+        },
+        "gui-import": {
+            "playground": "http.gui",
+            "innerPath": "gui-import",
+            "outerPath": "/~import"
+        },
+        "gui-preferences": {
+            "playground": "http.gui",
+            "innerPath": "gui-preferences",
+            "outerPath": "/~preferences"
+        }
+    }
+}

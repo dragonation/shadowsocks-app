@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="buttons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <polygon id="cancel" fill="#FFFFFF" fill-rule="nonzero" points="64.7903679 25.1923882 49.5875721 40.395184 64.7903679 55.5979797 55.5979797 64.7903679 40.395184 49.5875721 25.1923882 64.7903679 16 55.5979797 31.2027958 40.395184 16 25.1923882 25.1923882 16 40.395184 31.2027958 55.5979797 16"></polygon>
+    </g>
+</svg>

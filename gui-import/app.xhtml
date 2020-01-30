@@ -1,0 +1,35 @@
+<ui-dock-icon title="Shadowsocks" icon="/~shadowsocks/res/icon.svg"/>
+<ui-workbench style:background-color="#eee">
+    <div style:height="100%" style:display="flex" style:flex-direction="column">
+
+        <div class="inputs-line">
+            <div class="key">Subscription URL</div>
+            <ui-input-field id="url-input" placeholder="https://ssr.provider.localdomain/?token=foo" autoselect="yes"/>
+            <ui-button class="light" @action="analyzeURL()">Refresh</ui-button>
+        </div>
+
+        <ui-sheet-view class="sheet" columns="index, type, name, server, port" prop:data="${uris}" @cellselected="selectRow(parameter)">
+
+            <ui-sheet-view-column cell-getter="rowIndex + 1" cell-slot="number" name="index" style:--column-width="16px"><div class="column">#</div></ui-sheet-view-column>
+            <ui-sheet-view-column cell-getter="row.type" cell-slot="type" name="type" style:--column-width="30px"><div class="column">Type</div></ui-sheet-view-column>
+            <ui-sheet-view-column cell-getter="row.group" cell-slot="text" name="group" style:--column-width="40px"><div class="column">Group</div></ui-sheet-view-column>
+            <ui-sheet-view-column cell-getter="row.name" cell-slot="text" name="name" style:--column-width="90px"><div class="column">Name</div></ui-sheet-view-column>
+            <ui-sheet-view-column cell-getter="row.server" cell-slot="text" name="server" style:--column-width="100px"><div class="column">Host</div></ui-sheet-view-column>
+            <ui-sheet-view-column cell-getter="row.port" cell-slot="number" name="port" style:--column-width="24px"><div class="column">Port</div></ui-sheet-view-column>
+            <ui-sheet-view-column cell-getter="row.method" cell-slot="text" name="method"><div class="column">Method</div></ui-sheet-view-column>
+            <ui-sheet-view-column cell-getter="row.protocol" cell-slot="text" name="protocol" style:--column-width="70px"><div class="column">Protocol</div></ui-sheet-view-column>
+            <ui-sheet-view-column cell-getter="row.obfuscation" cell-slot="text" name="obfuscation"><div class="column">Obfuscation</div></ui-sheet-view-column>
+
+            <tmpl:slot name="type" class:selected="${rowIndex == selectedRowIndex}" class:type="${true}"><div class="type-cell" class:empty="${!cell}">${cell}</div></tmpl:slot>
+            <tmpl:slot name="text" class:selected="${rowIndex == selectedRowIndex}"><div class="text-cell" title="${cell}">${cell}</div></tmpl:slot>
+            <tmpl:slot name="number" class:selected="${rowIndex == selectedRowIndex}"><div class="number-cell">${cell}</div></tmpl:slot>
+            <tmpl:slot name="<ui-sheet-view-cell-empty>" class:selected="${rowIndex == selectedRowIndex}"></tmpl:slot>
+
+        </ui-sheet-view>
+
+        <div class="buttons-line">
+            <ui-button class="dark" disabled="${uris.length > 0 ? 'no' : 'yes'}" @action="addSubscription()">Add subscription${uris.length > 1 ? ' (' + uris.length + ' URLs)' : ''}</ui-button>
+        </div>
+
+    </div>
+</ui-workbench>

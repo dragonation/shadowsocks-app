@@ -1,0 +1,307 @@
+#!/usr/bin/env mew_js
+
+@import("js.engine");
+@import("mewchan.mgnt");
+
+const path = require("path");
+const net = require("net");
+const os = require("os");
+
+@.process.mode = "customized";
+
+const switchesRules = {
+    "!programName": "garden",
+    "!taskModes": {
+        "run": "run", 
+        "help": "help",
+        "version": "version",
+    },
+    "!taskHelp": {
+        "prefix": ["Program garden targets to help mew_js users to enrich mewchan",
+                   "runtime with more graphics UI"].join("\n"),
+        "modes": {
+            "rune": {
+                "text": "Start a mewchan",
+                "command": "garden run [<path>]"
+            },
+            "help": "Print help text",
+            "version": "Report hako version"
+        },
+        "suffix": "More info is available at https://www.mewchan.com",
+    },
+    "options": {},
+    "settings": {
+        "debug": {
+            "!valueType": "boolean", "!defaultValue": false,
+            "!switchText": "Force to run in debug mode"
+        },
+        "help": {
+            "!valueType": "boolean", "!defaultValue": false,
+            "!switchText": "Force to print help text"
+        },
+        "version": {
+            "!valueType": "boolean", "!defaultValue": false,
+            "!switchText": "Force to print mew_chan version text"
+        }
+    }
+};
+
+const abbreviations = ["json", "js"];
+
+const switches = @.process.switches(switchesRules, abbreviations);
+
+if ((switches.mode === "help") || switches.settings.help) {
+    @.task.printHelp(switchesRules, abbreviations);
+    process.exit(0);
+    return;
+}
+
+if ((switches.mode === "version") || switches.settings.version) {
+    @.process.print("garden version 5.0.0");
+    process.exit(0);
+    return;
+}
+
+let extra = @.merge.simple(switches.options, {
+    "id": (@.uuid())
+});
+
+if (switches.settings.debug &&
+    (!extra.logMewWithUsages)) {
+    extra.logMewWithUsages = ["*"];
+}
+
+let paths = [process.cwd()];
+
+if (@.fs.exists.dir(paths[0])) {
+    const libPath = @path(paths[0], "lib");
+    if (@.fs.exists.dir(libPath)) {
+        @.fs.listFiles(path, "lib").filter((record) => {
+            if ((@.fs.extname(record.name) === ".chan") && (record.type === "file")) {
+                paths.push(@path(libPath, record.name));
+            }
+        });
+    }
+}
+
+@mewchan.start(paths, switches.settings.presets, extra).then(function (mewchan) {
+
+    const scheduleGC = function () {
+
+        @engine.gc();
+
+        setTimeout(scheduleGC, 60 * 1000).unref();
+
+    };
+    scheduleGC();
+
+    if (@.process.debugging) {
+        @.schedule(10 * 1000, function () {
+            let unfinisheds = @.async.unfinisheds(10000);
+            if (unfinisheds.length > 0) {
+                let codes = [ `There are ${unfinisheds.length} unfinished async(s):` ];
+                let frames = Object.create(null);
+                unfinisheds.forEach((async) => {
+                    let frame = async.frame;
+                    let key = `${frame.source}:${frame.line}:${frame.column}`;
+                    if (!frames[key]) {
+                        frames[key] = 1;
+                    } else {
+                        ++frames[key];
+                    }
+                });
+                Object.keys(frames).sort((a, b) => frames[a] - frames[b]).reverse().forEach((frame) => {
+                    codes.push("[" + ("      " + frames[frame]).slice(-5) + "]: " + frame);
+                });
+                @warn(codes.join("\n    "));
+            }
+        });
+    }
+
+    mewchan.includeKitty("garden", @path(process.cwd(), "data/garden", @.uuid()), undefined, {
+        "virtual": true
+    }).pipe(this);
+
+}).then(function (kitty) {
+
+    let serverPath = @.process.switches().settings.server;
+    if (!serverPath) {
+        throw new Error("Garden server not found");
+    }
+
+    @info(`Found garden server[${serverPath}]`);
+
+    let serverSocket = net.Socket(); 
+    serverSocket.connect(serverPath); 
+
+    let serverDataSending = false;
+    let serverDataSendingQueue = [];
+
+    const sendCommand = function (command, callback) {
+
+        if (command === undefined) {
+            command = null;
+        }
+
+        let dataBuffer = Buffer.from(JSON.stringify(command), "utf8");
+
+        let sizeBuffer = Buffer.alloc(4);
+        sizeBuffer.writeUInt32LE(dataBuffer.length, 0);
+
+        serverDataSendingQueue.push(sizeBuffer, dataBuffer);
+
+        const trySendServerData = () => {
+            if (serverDataSending) { return; }
+            if (serverDataSendingQueue.length === 0) { return; }
+            serverDataSending = true;
+            let data = serverDataSendingQueue.shift();
+            serverSocket.write(data, (error) => {
+                if (error) {
+                    // TODO: reconnect
+                    @error(error);
+                    return;
+                }
+                serverDataSending = false;
+                trySendServerData();
+            });
+        };
+        trySendServerData();
+
+    };
+
+    const callbacks = Object.create(null);
+
+    const handleEvent = function (event) {
+
+        if (!event.usage) {
+            if (callbacks[event.callback]) {
+                let error = undefined;
+                if (event.error) {
+                    error = @.error.ensure(event.error);
+                }
+                callbacks[event.callback](error, event.result);
+            } else {
+                @warn(`Unknown callback received[${event.callback}]`);
+            }
+            return;
+        }
+
+        kitty.sendMew({}, event.usage, {
+            "!content": true,
+            [event.usage]: event.content
+        });
+
+    };
+
+    let serverDataReceivingBuffers = [];
+    serverSocket.on("data", function (data) { 
+
+        serverDataReceivingBuffers.push(data);
+
+        let parse = () => {
+
+            if (serverDataReceivingBuffers.length === 0) {
+                return;
+            }
+            if (serverDataReceivingBuffers[0].length < 4) {
+                if (serverDataReceivingBuffers.length === 1) {
+                    return;
+                }
+                let newBuffer = Buffer.concat([serverDataReceivingBuffers[0], 
+                                               serverDataReceivingBuffers[1]]);
+                serverDataReceivingBuffers.splice(0, 2, newBuffer);
+                parse();
+                return;
+            }
+
+            let size = serverDataReceivingBuffers[0].readUInt32LE(0);
+            let bufferSize = 0;
+            let looper = 0;
+            while ((bufferSize < size + 4) && (looper < serverDataReceivingBuffers.length)) {
+                bufferSize += serverDataReceivingBuffers[looper].length;
+                ++looper;
+            }
+            if (bufferSize < size + 4) {
+                return;
+            }
+
+            let buffer = Buffer.concat(serverDataReceivingBuffers.slice(0, looper));
+            serverDataReceivingBuffers.splice(0, looper);
+            if (size + 4 < bufferSize) {
+                serverDataReceivingBuffers.unshift(buffer.slice(size + 4));
+            }
+
+            let json = undefined;
+            try {
+                json = JSON.parse(buffer.slice(4, size + 4).toString("utf8"));
+            } catch (error) {
+                @error(error);
+            }
+
+            if (json) {            
+                try {
+                    handleEvent(json);
+                } catch (error) {
+                    @error(error);
+                }
+            }
+
+            if (serverDataReceivingBuffers.length > 0) {
+                parse();
+            }
+
+        };
+
+        parse();
+
+    }); 
+
+    serverSocket.on("error", function (error) {
+        @error(error);
+    });
+
+    kitty.heardWithRPC("*", "garden.*").then(function (content, mew) {
+
+        if (mew.usage === "garden.settings") {
+            return @.async.resolve(switches.settings);
+        }
+
+        if (content instanceof Error) {
+            content = {
+                "message": content.message,
+                "stack": content.stack
+            };
+        }
+
+        let callbackID = @.uuid();
+
+        return @.async(function () {
+
+            callbacks[callbackID] = this.test;
+
+            sendCommand({
+                "usage": mew.usage.split(".").slice(2).join("."),
+                "content": content,
+                "callback": callbackID
+            });
+
+        });
+
+    });
+
+    sendCommand({
+        "usage": "garden.ready",
+        "content": {}
+    });
+
+    kitty.emitMew("garden.ready", {});
+
+    this.next();
+
+}).finished((error) => {
+
+    if (error) {
+        @error(error);
+    }
+
+});

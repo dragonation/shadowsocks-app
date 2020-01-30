@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title>Garden</title>
+        <link rel="stylesheet" href="error-dialog.css"/>
+        <script src="./error-dialog.js"></script>
+    </head>
+    <body>
+        <div class="title"><text code="title"/></div>
+        <div class="stacks">
+            <for list="stack">
+                <div class="stack-frame">
+                    <div class="symbol"><text code="item.symbol"/></div>
+                    <div class="file"><text code="item.file"/></div>:<div class="line"><text code="item.line"/></div>:<div class="column"><text code="item.column"/></div>
+                </div>
+            </for>
+        </div>
+    </body>
+</html>

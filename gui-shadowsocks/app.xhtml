@@ -1,0 +1,125 @@
+<ui-dock-icon title="Shadowsocks" icon="/~shadowsocks/res/icon.svg"/>
+<ui-workbench style:background-color="#eee">
+    <div style:display="flex" style:height="100%">
+
+        <!-- config list -->
+        <ui-collection-view id="list" style:width="240px"
+                            style:--cell-width="calc(240px - 1dpx)" style:--cell-height="30px"
+                            style:--extra-padding-bottom="160px"
+                            prop:sections="${groups}" prop:cells-getter="{section.configs}">
+            <tmpl:slot name="cell">
+                <div class="cell" class:selected="${selected && selected.id == cell.id}">
+                    <img id="connected" class:visible="${connected && (connected.id == cell.id)}" src="/~shadowsocks/res/connected${selected.id == cell.id ? '-selected' : ''}.svg" @click="selectConfig(section.name, cell)"/>
+                    <div id="name" title="${cell.name}" @click="selectConfig(section.name, cell)" @dblclick="connectSelectedConfigDirectly()">${cell.name}</div>
+                    <ui-button id="delete-button" @action="deleteConfig(cell)"><img title="Delete the config" src="/~shadowsocks/res/delete${selected.id == cell.id ? '-selected' : ''}.svg"/></ui-button>
+                </div>
+            </tmpl:slot>
+            <tmpl:slot name="section-header"><span class="group-name" class:empty="${!section.name}">${section.name ?: 'empty'}</span><span class="cell-count">${section.configs.length}</span></tmpl:slot>
+        </ui-collection-view>
+
+        <!-- buttons -->
+        <ui-button id="add-button" class="button" class:visible="${!modification}" title="Add new configs" @action="showAddActionList(event)"><img src="/~shadowsocks/res/add.svg"/></ui-button>
+
+        <ui-button id="connect-button" class="button" class:visible="${(!modification) && selected && ((!connected) || (connected.id != selected.id))}" title="Connect config selected" @action="connectSelectedConfig()"><img src="/~shadowsocks/res/connect.svg"/></ui-button>
+        <ui-button id="disconnect-button" class="button" class:visible="${(!modification) && selected && (connected && (connected.id == selected.id))}" title="Disconnect config selected" @action="disconnectSelectedConfig()"><img src="/~shadowsocks/res/disconnect.svg"/></ui-button>
+
+        <ui-button id="save-button" class="button" class:visible="${modification}" title="Save modifications" @action="saveModifications()"><img src="/~shadowsocks/res/save.svg"/></ui-button>
+        <ui-button id="cancel-button" class="button" class:visible="${modification}" title="Cancel modifications" @action="cancelModifications()"><img src="/~shadowsocks/res/cancel.svg"/></ui-button>
+        <ui-button id="test-button" class="button" class:visible="${modification}" title="Test modifications" @action="testModifications()"><img src="/~shadowsocks/res/test.svg"/></ui-button>
+
+        <!-- fields -->
+        <div id="fields" style:width="330px">
+
+            <!-- server -->
+            <div class="field">
+                <div class="key required" class:dirty="${modification && (modification.new || (modification.server != selected.server))}" title="Remote server hostname or IP">Host</div>
+                <ui-input-field class="value" autoselect="yes" placeholder="server.unknown" value="${selected.server}" trigger:value="${formVersion}" @change="updateModification('server', parameter)"/>
+            </div>
+
+            <!-- port -->
+            <div class="field">
+                <div class="key required" class:dirty="${modification && (modification.new || (modification.port != selected.port))}" title="Remote server port">Port</div>
+                <ui-number-field class="value" autoselect="yes" placeholder="457" value="${selected.port}" trigger:value="${formVersion}" @change="updateModification('port', parameter)"/>
+            </div>
+
+            <!-- password -->
+            <div class="field">
+                <div class="key required" class:dirty="${modification && (modification.new || (modification.password != selected.password))}" title="Remote password">Password</div>
+                <ui-password-field class="value" autoselect="yes" placeholder="keep it secret" value="${selected.password}" trigger:value="${formVersion}" @change="updateModification('password', parameter)"/>
+            </div>
+
+            <!-- method -->
+            <div class="field">
+                <div class="key required" class:dirty="${modification && (modification.new || (modification.method != selected.method))}" title="Encryption method">Method</div>
+                <ui-picker-field class="value" placeholder="none" value="${selected.method}" trigger:value="${formVersion}" @change="updateModification('method', parameter)">
+                    <tmpl:map list="methods">
+                        <ui-picker-field-item value="${item}">${item}</ui-picker-field-item>
+                    </tmpl:map>
+                </ui-picker-field>
+            </div>
+
+            <!-- protocol -->
+            <div class="field">
+                <div class="key required" class:dirty="${modification && (modification.new || (modification.protocol != selected.protocol))}" title="Transfer protocol">Protocol</div>
+                <ui-picker-field class="value" placeholder="origin" value="${selected.protocol}" trigger:value="${formVersion}" @change="updateModification('protocol', parameter)">
+                    <tmpl:map list="protocols">
+                        <ui-picker-field-item value="${item}">${item}</ui-picker-field-item>
+                    </tmpl:map>
+                </ui-picker-field>
+            </div>
+
+            <!-- protocol parameters -->
+            <div class="field">
+                <div class="key subkey" class:dirty="${modification && (modification.new || (modification.protocolParameters != selected.protocolParameters))}" title="Extra protocol parameters">Parameters</div>
+                <ui-input-field class="value" autoselect="yes" placeholder="unset" value="${selected.protocolParameters}" trigger:value="${formVersion}" @change="updateModification('protocolParameters', parameter)"/>
+            </div>
+
+            <!-- obfuscation -->
+            <div class="field">
+                <div class="key required" class:dirty="${modification && (modification.new || (modification.obfuscation != selected.obfuscation))}" title="Data obfuscation algorithm">Obfuscation</div>
+                <ui-picker-field class="value" placeholder="plain" value="${selected.obfuscation}" trigger:value="${formVersion}" @change="updateModification('obfuscation', parameter)">
+                    <tmpl:map list="obfuscations">
+                        <ui-picker-field-item value="${item}">${item}</ui-picker-field-item>
+                    </tmpl:map>
+                </ui-picker-field>
+            </div>
+
+            <!-- obfuscation parameters -->
+            <div class="field">
+                <div class="key subkey" class:dirty="${modification && (modification.new || (modification.obfuscationParameters != selected.obfuscationParameters))}" title="Extra obfuscation parameters">Parameters</div>
+                <ui-input-field class="value" autoselect="yes" placeholder="unset" value="${selected.obfuscationParameters}" trigger:value="${formVersion}" @change="updateModification('obfuscationParameters', parameter)"/>
+            </div>
+
+            <!-- name -->
+            <div class="field">
+                <div class="key" class:dirty="${modification && (modification.new || (modification.name != selected.name))}" title="Config name">Name</div>
+                <ui-input-field class="value" autoselect="yes" placeholder="untitled" value="${selected.name}" trigger:value="${formVersion}" @change="updateModification('name', parameter)"/>
+            </div>
+
+            <!-- group -->
+            <div class="field">
+                <div class="key" class:dirty="${modification && (modification.new || (modification.group != selected.group))}" title="Config group name">Group</div>
+                <ui-input-field class="value" autoselect="yes" placeholder="default group" value="${selected.group}" trigger:value="${formVersion}" @change="updateModification('group', parameter)"/>
+            </div>
+
+        </div>
+
+        <!-- overview -->
+        <div id="overview" style:width="300px">
+
+            <!-- qrcode -->
+            <ui-button id="qr-code" title="Click to save SVG image" style:background-image="${editingURL ? 'url(\'/uris/qrcode?url=' + escape(editingURL) + '\')' : 'none'}" @action="saveQRCode()">
+                <img id="qr-logo" src="/~shadowsocks/res/icon.svg"/>
+            </ui-button>
+
+            <!-- url -->
+            <ui-button @action="copyURIToClipboard()">
+                <ui-scroll-view id="link-url" title="Click to copy URL" scroll-y="yes">
+                    <div id="content">${editingURL}</div>
+                </ui-scroll-view>
+            </ui-button>
+            
+        </div>
+
+    </div>
+</ui-workbench>

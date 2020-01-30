@@ -1,0 +1,299 @@
+#list {
+
+    background-color: $alpha($white(1), 0.5);
+    border-right: solid 1dpx rgba(0, 0, 0, 0.2);
+    z-index: 0;
+
+    ui-collection-view-section-header {
+        border-top-color: $alpha($white(0), 0.15);
+        border-bottom-color: $alpha($white(0), 0.15);
+        color: $alpha($white(0), 0.3);
+        font-weight: bold;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+    }
+
+    .group-name {
+
+        margin-right: 8px;
+
+        &.empty {
+            color: $alpha($white(0), 0.1);
+        }
+
+    }
+
+    .cell-count {
+        font-size: 10px;
+        padding: 2px 6px;
+        line-height: 1;
+        background-color: $alpha($white(0), 0.16);
+        color: #fff;
+        border-radius: 40px;
+    }
+
+    ui-collection-view-cell {
+
+        .cell {
+
+            padding: 0 10px;
+            line-height: var(--cell-height, 30px);
+            color: #333;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: pre;
+            display: flex;
+            align-items: center;
+
+            &.selected {
+                background-color: #0d8ef1;
+                color: #fff;
+                &:hover {
+                    background-color: $bright(#0d8ef1, -0.1);
+                    color: #fff;
+                }
+            }
+
+            &:hover {
+
+                #delete-button {
+                    opacity: 0.7;
+                    pointer-events: auto;
+                    &:hover {
+                        opacity: 1;
+                    };
+                }
+
+            }
+
+            #connected {
+
+                width: 20px; 
+                height: 20px; 
+                flex-shrink: 0;
+                margin-left: -4px;
+                margin-right: 2px;
+                cursor: pointer;
+                opacity: 0;
+
+                &.visible {
+                    opacity: 1;
+                }
+
+            }
+
+            #name {
+                flex-grow: 1; 
+                flex-shrink: 1;
+                white-space: pre;
+                word-break: keep-all;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            #delete-button {
+                opacity: 0;
+                pointer-events: none;
+                flex-shrink: 0;
+                cursor: pointer;
+                margin-right: -4px;
+                img {
+                    width: 20px; 
+                    height: 20px; 
+                }
+            }
+
+        }
+
+    }
+
+}
+
+$button($color) {
+
+    background-color: $alpha($color, 0.4);
+    box-shadow: 0 0 6px $alpha($color, 0.3);
+
+    &:hover {
+        background-color: $alpha($color, 0.6);
+        box-shadow: 0 0 6px $alpha($color, 0.6);
+    }
+
+    &.picking,
+    &.pressing {
+        background-color: $alpha($color, 0.8);
+        box-shadow: 0 0 6px $alpha($color, 0.8);
+    }
+
+}
+
+.button {
+
+    --button-color: #888;
+
+    z-index: 1;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background-color: #888;
+    line-height: 40px;
+    border-radius: 40px;
+    left: 185px;
+    text-align: center;
+    color: #fff;
+    cursor: pointer;
+    border: solid 1dpx $alpha($white(1), 0.5);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: box-shadow 0.3s, background-color 0.3s, opacity 0.3s, transform 0.3s;
+    transform: translateY(20px);
+
+    $button(#888);
+
+    &.visible {
+        opacity: 1;
+        pointer-events: auto;
+        transform: none;
+    }
+
+    img {
+        width: 30px; 
+        height: 30px; 
+        margin: calc(5px - 1dpx);
+    }
+
+}
+
+#add-button {
+    top: 360px;
+    $button(#19af2c);
+}
+
+#save-button {
+    top: 360px;
+    $button(#008aff);
+}
+
+#connect-button {
+    top: 310px;
+    $button(#3053ff);
+}
+
+#disconnect-button {
+    top: 310px;
+    $button(#ff005e);
+}
+
+#test-button {
+    top: 310px;
+    $button(#ff9900);
+}
+
+#cancel-button {
+    top: 260px;
+    $button(#ff1700);
+}
+
+.field {
+
+    display: flex;
+    margin-top: 10px;
+    line-height: 30px;
+    font-size: 12px;
+
+    .key {
+
+        width: 100px;
+        text-align: right;
+        margin-right: 14px;
+        color: #888;
+
+        &.subkey {
+            color: #aaa;
+            &.dirty {
+                color: $alpha(#489ce3, 0.4);
+            }
+        }
+
+        &.dirty {
+            color: #489ce3;
+            font-weight: bold;
+        }
+
+        &.required::before {
+            content: '*';
+            color: #ff411e;
+            font-weight: bold;
+            font-family: 'Mew Source SC';
+            margin-right: 2px;
+        }
+
+    }
+
+    .value {
+        width: 200px;
+        height: 30px;
+        line-height: calc(30px - 2dpx);
+        border-radius: 3px;
+        padding: 0 6px;
+        color: #333;
+        font-family: 'Mew Source SC', monospace;
+        font-size: 11px;
+    }
+
+}
+
+#qr-code {
+
+    width: 300px;
+    height: 300px; 
+    background-color: $alpha($white(1), 0.5);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    margin-top: 10px; 
+    border: solid 1dpx $alpha($white(0), 0.3);
+    border-radius: 3px;
+    cursor: pointer;
+
+    #qr-logo {
+        width: 80px; 
+        height: 80px; 
+        margin: calc(110px - 1dpx);
+        background-color: $alpha($white(1), 1);
+        border: solid 1dpx rgba(0, 0, 0, 0.15);
+        /*border: solid 1dpx transparent;*/
+        border-radius: 5px;
+    }
+
+}
+
+#link-url {
+
+    font-family: 'Mew Source SC', monospace;
+    width: 300px;
+    height: 84px;
+    background-color: rgba(0, 0, 0, 0.03);
+    margin-top: 10px;
+    line-height: 1.4;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 8px;
+    color: #666;
+    border: solid 1dpx $alpha($white(0), 0.05);
+    word-break: break-all;
+
+    transition: background-color 0.3s, border-color 0.3s;
+
+    #content {
+        padding: 4px;
+    }
+
+    &:hover {
+        background-color: $alpha($white(1), 0.1);
+        border-color: $alpha($white(0), 0.2);
+    }
+
+}

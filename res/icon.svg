@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#37AA37" offset="0%"></stop>
+            <stop stop-color="#9DDB9D" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#37AA37" offset="0%"></stop>
+            <stop stop-color="#9DDB9D" offset="100%"></stop>
+        </linearGradient>
+        <radialGradient cx="50%" cy="95.8848651%" fx="50%" fy="95.8848651%" r="95.8848651%" gradientTransform="translate(0.500000,0.958849),scale(0.844720,1.000000),rotate(-90.000000),scale(1.000000,0.861869),translate(-0.500000,-0.958849)" id="radialGradient-3">
+            <stop stop-color="#FFDB98" offset="0%"></stop>
+            <stop stop-color="#FF961C" offset="100%"></stop>
+        </radialGradient>
+    </defs>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group" transform="translate(129.000000, 167.000000)">
+            <polygon id="Path" fill="url(#linearGradient-1)" fill-rule="nonzero" points="421.775075 559.875687 350.39577 690.745099 329.775075 532.745099"></polygon>
+            <path d="M765.775075,0.74509871 L620.743831,576.745099 L338.650079,487.640992 L590.462578,180.547075 L265.337571,465.36475 L0.77507452,382.623554 L86.0865319,340.037918 C90.9573461,340.994177 95.9916727,341.495396 101.143256,341.495396 L101.143256,341.495396 L343.501946,341.495396 C364.928689,341.495396 384.326964,332.824605 398.368553,318.805833 C412.410142,304.787062 421.095045,285.420308 421.095045,264.028384 L421.095045,264.028384 L421.094075,172.805099 L765.775075,0.74509871 Z" id="Combined-Shape" fill="url(#linearGradient-2)" fill-rule="nonzero"></path>
+            <path d="M381.816741,31.7450987 L381.817424,124.232968 C382.444525,127.083152 382.775075,130.044538 382.775075,133.083127 L382.775075,262.745099 C382.775075,285.388773 364.418749,303.745099 341.775075,303.745099 L102.733408,303.745099 C80.0897331,303.745099 61.7334079,285.388773 61.7334079,262.745099 L61.7330745,242.449099 L60.7750745,242.449324 L60.7750745,31.7450987 L116.352245,92.0831269 L329.696303,92.0831269 L381.816741,31.7450987 Z" id="Combined-Shape" fill="url(#radialGradient-3)"></path>
+        </g>
+    </g>
+</svg>

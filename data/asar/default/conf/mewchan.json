@@ -1,0 +1,9 @@
+{
+    "brainOptions": {},
+    "playgrounds": {
+        "http.gui": {
+            "socket": "${tempFile('garden-gui-')}.sock"
+        }
+    },
+    "kitties": {}
+}

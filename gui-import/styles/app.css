@@ -1,0 +1,113 @@
+.inputs-line {
+
+    display: flex;
+    margin: 10px;
+    line-height: 30px;
+    height: 30px;
+    font-size: 12px;
+
+    .key {
+        margin-right: 10px;
+        color: #888;
+    }
+
+    ui-input-field {
+        flex-grow: 1;
+        flex-shrink: 1;
+        height: 30px;
+        line-height: calc(30px - 2dpx);
+        font-family: 'Mew Source SC', monospace;
+        font-size: 11px;
+    }
+
+    ui-button {
+        margin-left: 10px;
+        height: 30px;
+        background-color: #eee;
+        line-height: calc(30px - 2dpx);
+    }
+
+}
+
+.sheet {
+
+    border-right: none;
+    border-left: none;
+    font-size: 12px;
+    flex-grow: 1;
+    flex-shrink: 1;
+    height: 100px;
+
+    ui-sheet-view-cell {
+
+        color: #333;
+        display: flex;
+        align-items: center;
+
+        &.type {
+            justify-content: center;
+        }
+
+        &.selected {
+
+            color: #fff;
+            background-color: #0d8ef1;
+            border-left-color: #0263ad;
+            border-right-color: #0263ad;
+
+            .type-cell {
+                color: #0d8ef1;
+                background-color: $white(1);
+            }
+
+        }
+
+    }
+
+    .column {
+        padding: 0 6px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .text-cell {
+        padding: 0 6px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .type-cell {
+
+        padding: 0 6px;
+        line-height: 18px;
+        height: 18px;
+        background-color: $alpha($white(0), 0.3);
+        border-radius: 4px;
+        color: #fff;
+        text-transform: uppercase;
+        font-weight: bold;
+
+        &.empty {
+            opacity: 0;
+        }
+
+    }
+
+    .number-cell {
+        padding: 0 6px;
+        text-align: right;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 100%;
+    }
+
+}
+
+.buttons-line {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 12px;
+}

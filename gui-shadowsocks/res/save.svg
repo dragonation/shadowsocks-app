@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="buttons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M40,13 C54.9116882,13 67,25.0883118 67,40 C67,54.9116882 54.9116882,67 40,67 C25.0883118,67 13,54.9116882 13,40 C13,25.0883118 25.0883118,13 40,13 Z M40,25 C31.7157288,25 25,31.7157288 25,40 C25,48.2842712 31.7157288,55 40,55 C48.2842712,55 55,48.2842712 55,40 C55,31.7157288 48.2842712,25 40,25 Z" id="save" fill="#FFFFFF" fill-rule="nonzero"></path>
+    </g>
+</svg>

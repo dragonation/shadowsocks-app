@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Shadowsocks
+Exec=${APP_PATH}/bin/ssr-gui %U
+Terminal=false
+Type=Application
+Icon=${APP_ICON}
+Categories=Network;
+StartupWMClass=minun_shadowsocks_app
+

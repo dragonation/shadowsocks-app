@@ -57,6 +57,10 @@ const startupOnlyOnce = function () {
             });
         }
 
+        this.next();
+
+    }).then(function () {
+
         if (gardenConfigs.defaultWindow) {
             @mew.rpc("ssr.window.show", { 
                 "id": gardenConfigs.defaultWindow 

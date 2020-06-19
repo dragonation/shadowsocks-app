@@ -1,7 +1,7 @@
-const defaultURL = "https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt";
+// const defaultURL = "https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt";
 // https://pagure.io/gfwlist/raw/master/f/gfwlist.txt
 // http://repo.or.cz/gfwlist.git/blob_plain/HEAD:/gfwlist.txt
-// https://bitbucket.org/gfwlist/gfwlist/raw/HEAD/gfwlist.txt
+const defaultURL = "https://bitbucket.org/gfwlist/gfwlist/raw/HEAD/gfwlist.txt";
 // https://gitlab.com/gfwlist/gfwlist/raw/master/gfwlist.txt
 // https://git.tuxfamily.org/gfwlist/gfwlist.git/plain/gfwlist.txt
 
@@ -12,7 +12,16 @@ const generateGFWListScript = function (content) {
     let list = configs.split("\n").slice(1).filter((line) => {
         line = line.trim();
         return line && (line[0] !== "!");
-    }).sort((a, b) => {
+    });
+
+    if (@.fs.exists(@path(@mewchan().workingPath, "data/gfwlist/custom.txt"))) {
+        let custom = @.fs.readFile.sync(@path(@mewchan().workingPath, "data/gfwlist/custom.txt"), "utf8").split("\n").map((line) => {
+            return line.trim();
+        }).filter((line) => line);
+        list = list.concat(custom);
+    }
+
+    list.sort((a, b) => {
         a = a.replace(/^[|@.]+/, "");
         b = b.replace(/^[|@.]+/, "");
         return a.localeCompare(b);

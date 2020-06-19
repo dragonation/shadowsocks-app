@@ -226,7 +226,7 @@ $button($color) {
             content: '*';
             color: #ff411e;
             font-weight: bold;
-            font-family: 'Mew Source SC';
+            font-family: 'Mew Source';
             margin-right: 2px;
         }
 
@@ -239,7 +239,7 @@ $button($color) {
         border-radius: 3px;
         padding: 0 6px;
         color: #333;
-        font-family: 'Mew Source SC', monospace;
+        font-family: 'Mew Source', monospace;
         font-size: 11px;
     }
 
@@ -272,7 +272,7 @@ $button($color) {
 
 #link-url {
 
-    font-family: 'Mew Source SC', monospace;
+    font-family: 'Mew Source', monospace;
     width: 300px;
     height: 84px;
     background-color: rgba(0, 0, 0, 0.03);

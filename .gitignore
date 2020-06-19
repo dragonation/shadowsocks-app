@@ -1,0 +1,5 @@
+data/doc
+data/lib
+data/electron
+data/mewjs
+*.pyc
